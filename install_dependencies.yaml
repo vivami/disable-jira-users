@@ -1,0 +1,59 @@
+---
+- hosts: 127.0.0.1
+  strategy: debug
+  connection: local
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: Install missing packages
+      apt: 
+        name: ['software-properties-common', 'gnupg2', 'build-essential', 'apt-transport-https', 'python3-dev', 'libssl-dev', 'python3', 'python3-setuptools', 'python3-pip', 'python3-venv', 'curl', 'unzip', 'ca-certificates']
+        state: latest
+        update_cache: yes
+
+      # Install Chrome
+
+    - name: get google key
+      become: yes
+      apt_key:
+        url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
+        state: present
+
+    - name: add google repository
+      become: yes
+      command: sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+
+    - name: update apt
+      become: yes
+      apt: update_cache=yes
+
+    - name: install google-chrome and chromedriver dependencies
+       name: ['google-chrome-stable', 'libnss3', 'libgconf-2-4']
+        state: latest
+        update_cache: yes
+
+    # Install chrome-driver
+
+    - name: get chromedriver latest version number
+      uri:
+        url: "http://chromedriver.storage.googleapis.com/LATEST_RELEASE"
+        return_content: yes
+        headers:
+          Content-Type: "text/plain"
+      register: latest_chromedriver
+
+    - name: download chromedriver
+      become: yes
+      unarchive:
+        src: "https://chromedriver.storage.googleapis.com/{{ latest_chromedriver.content|trim }}/chromedriver_linux64.zip"
+        dest: /usr/local/bin
+        mode: 0644
+        remote_src: yes
+
+    - name: Install missing python3 libraries
+      pip:
+        virtualenv: /tmp/py3
+        virtualenv_command: /usr/bin/python3 -m venv
+        name: ['selenium', 'pandas']
+        state: latest
+
