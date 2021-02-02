@@ -13,4 +13,8 @@ $ ansible-playbook install_dependencies.yaml
 
 Download a user export by logging into https://admin.atlassian.com/, Settings, User Management, Export Users.
 
-`$ disable_jira_users.py --users /path/to/export-users.csv --days 60`
+```
+$ export USER="jira-admin@domain.com"
+$ export PASS="p@55w0rd"
+$ disable_jira_users.py --users /path/to/export-users.csv --days 60
+```
