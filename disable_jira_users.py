@@ -1,5 +1,3 @@
-""" Disable JIRA User via selenium and chrome headless browser """
-
 from os import environ
 import time
 import argparse
@@ -45,7 +43,7 @@ def parse_args():
 
 
 def get_user_management_session(driver, selenium):
-    """ Set jira user inactive"""
+    """ Get an authenticated session to manage users """
     try:
         # Load the page
         selenium.get_page(JIRA_SERVER)
@@ -121,7 +119,7 @@ def is_download_finished(temp_folder):
         return False
 
 def set_jira_user_inactive(driver, selenium, user):
-    """ Set jira user inactive"""
+    """ Disable a Jira user"""
     try:
         # Click Search field and enter the username
         selenium.move_and_click(driver.find_element_by_xpath("//input[@aria-label='Search']"))
