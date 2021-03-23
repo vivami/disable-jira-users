@@ -111,9 +111,7 @@ def download_user_file(driver, selenium):
 def is_download_finished(temp_folder):
     chrome_temp_file = sorted(Path(temp_folder).glob('*.crdownload'))
     downloaded_files = sorted(Path(temp_folder).glob('*.csv'))
-    if (len(firefox_temp_file) == 0) and \
-       (len(chrome_temp_file) == 0) and \
-       (len(downloaded_files) >= 1):
+    if (len(chrome_temp_file) == 0) and (len(downloaded_files) >= 1):
         return True
     else:
         return False
@@ -129,17 +127,19 @@ def set_jira_user_inactive(driver, selenium, user):
         driver.find_element_by_xpath("//input[@aria-label='Search']").send_keys(user)
         
         # Wait one second to fetch results before continueing
-        time.sleep(1)
+        time.sleep(3)
         
         # Click on the button with three-dots
         driver.find_element_by_css_selector('.cLrmQm').click()
+        time.sleep(1)
         # Click on 'Revoke site access'
         selenium.move_and_click(driver.find_element_by_xpath("//*[contains(text(), 'Revoke site access')]"))
 
+        time.sleep(1)
     # Click final red 'Revoke site access' button
         selenium.wait_for_element_css_selector_to_click('#submit-activate-user-modal')
         driver.find_element_by_css_selector('#submit-activate-user-modal').click()
-        time.sleep(1)
+        time.sleep(2)
         print("[+] User {} succesfully disabled".format(user))
     
     except NoSuchElementException as e:
@@ -160,12 +160,12 @@ def quit_driver(driver):
 def get_inactive_users(filename, days):
     pd.set_option('display.max_rows', None)
     df = pd.read_csv(filename, parse_dates=['Last seen in Jira Software', 'created'])
-    df = df.loc[df['Last seen in Jira Software'] != 'Never logged in']
-    df['Last seen in Jira Software'] = df['Last seen in Jira Software'].apply(dateutil.parser.parse)
+    df = df.loc[df['Last seen in Jira Core'] != 'Never logged in']
+    df['Last seen in Jira Core'] = df['Last seen in Jira Core'].apply(dateutil.parser.parse)
 
-    results = df[(df['Last seen in Jira Software'] < numberOfDaysAgo(days)) & (df['created'] < numberOfDaysAgo(days)) & (df['active'] == 'Yes')]
+    results = df[(df['Last seen in Jira Core'] < numberOfDaysAgo(days)) & (df['created'] < numberOfDaysAgo(days)) & (df['active'] == 'Yes')]
     print("[+] Found " + str(len(results['email'].unique())) + " inactive users")
-    print(results[['email', 'Last seen in Jira Software']])
+    print(results[['email', 'Last seen in Jira Core']])
     input("[?] Do you want to disable these Jira users? Press any key to continue. Press CTRL+C to abort")
     return set(results['email'].to_list())
 
