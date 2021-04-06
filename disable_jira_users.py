@@ -14,7 +14,7 @@ JIRA_SERVER = "https://admin.atlassian.com/"
 
 def main():
     args = parse_args()
-    selenium = Selenium(headless=False)
+    selenium = Selenium(headless=True)
     get_user_management_session(selenium.driver, selenium)
     
     user_file = None

@@ -19,8 +19,8 @@ class Selenium(object):
             self.user = user
             self.password = password
         else:
-            self.user = environ['USER']
-            self.password = environ['PASS']
+            self.user = environ['JIRA_USER']
+            self.password = environ['JIRA_PASS']
 
         # Headless option set
         self.headless = headless

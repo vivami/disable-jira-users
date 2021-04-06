@@ -11,10 +11,19 @@ $ ansible-playbook install_dependencies.yaml
 
 ### Usage
 
-Download a user export by logging into https://admin.atlassian.com/, Settings, User Management, Export Users.
+#### Local
 
 ```
-$ export USER="jira-admin@domain.com"
-$ export PASS="p@55w0rd"
-$ disable_jira_users.py --users /path/to/export-users.csv --days 60
+$ export JIRA_USER="jira-admin@domain.com"
+$ export JIRA_PASS="p@55w0rd"
+$ disable_jira_users.py --days 60
+```
+
+#### Docker
+
+Running in headless mode, in a Docker container: define `JIRA_USER` and `JIRA_PASS` in `jira_creds` and run the following commands:
+
+```
+sudo docker build --build-arg --tag disable-jira-users .
+sudo docker run --rm -it --env-file ./jira_creds disable-jira-users --days 90
 ```
